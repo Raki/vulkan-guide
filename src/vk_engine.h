@@ -71,6 +71,11 @@ public:
 	VkPipeline _gradientPipeline;
 	VkPipelineLayout _gradientPipelineLayout;
 
+	// immediate submit structures
+	VkFence _immFence;
+	VkCommandBuffer _immCommandBuffer;
+	VkCommandPool _immCommandPool;
+
 	//draw resources
 	AllocatedImage _drawImage;
 	VkExtent2D _drawExtent;
@@ -93,6 +98,11 @@ public:
 
 	void draw_background(VkCommandBuffer cmd);
 
+	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
+
+	void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
+
+
 	FrameData& get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; };
 private:
 
@@ -105,4 +115,5 @@ private:
 	void init_descriptors();
 	void init_pipelines();
 	void init_background_pipelines();
+	void init_imgui();
 };

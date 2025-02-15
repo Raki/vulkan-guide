@@ -4,6 +4,7 @@
 #pragma once
 
 #include <vk_types.h>
+#include <vk_descriptors.h>
 
 struct DeletionQueue
 {
@@ -62,6 +63,11 @@ public:
 
 	VmaAllocator _allocator;
 
+	DescriptorAllocator globalDescriptorAllocator;
+
+	VkDescriptorSet _drawImageDescriptors;
+	VkDescriptorSetLayout _drawImageDescriptorLayout;
+
 	//draw resources
 	AllocatedImage _drawImage;
 	VkExtent2D _drawExtent;
@@ -93,4 +99,5 @@ private:
 	void init_sync_structures();
 	void create_swapchain(uint32_t width, uint32_t height);
 	void destroy_swapchain();
+	void init_descriptors();
 };

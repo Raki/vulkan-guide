@@ -97,6 +97,9 @@ public:
 	std::vector<ComputeEffect> backgroundEffects;
 	int currentBackgroundEffect{ 0 };
 
+	VkPipelineLayout _trianglePipelineLayout;
+	VkPipeline _trianglePipeline;
+
 	//draw resources
 	AllocatedImage _drawImage;
 	VkExtent2D _drawExtent;
@@ -123,6 +126,7 @@ public:
 
 	void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 
+	void draw_geometry(VkCommandBuffer cmd);
 
 	FrameData& get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; };
 private:
@@ -136,5 +140,6 @@ private:
 	void init_descriptors();
 	void init_pipelines();
 	void init_background_pipelines();
+	void init_triangle_pipeline();
 	void init_imgui();
 };

@@ -212,7 +212,7 @@ void VulkanEngine::run()
 
 			ImGui::Text("Selected effect: ", selected.name);
 
-			ImGui::SliderInt("Effect Index", &currentBackgroundEffect, 0, backgroundEffects.size() - 1);
+			ImGui::SliderInt("Effect Index", &currentBackgroundEffect, 0, (int)backgroundEffects.size() - 1);
 
 			ImGui::InputFloat4("data1", (float*)&selected.data.data1);
 			ImGui::InputFloat4("data2", (float*)&selected.data.data2);
@@ -241,7 +241,7 @@ void VulkanEngine::draw_background(VkCommandBuffer cmd)
 
 	vkCmdPushConstants(cmd, _gradientPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(ComputePushConstants), &effect.data);
 	// execute the compute pipeline dispatch. We are using 16x16 workgroup size so we need to divide by it
-	vkCmdDispatch(cmd, std::ceil(_drawExtent.width / 16.0), std::ceil(_drawExtent.height / 16.0), 1);
+	vkCmdDispatch(cmd, (uint32_t)std::ceil(_drawExtent.width / 16.0), (uint32_t)std::ceil(_drawExtent.height / 16.0), 1);
 }
 
 void VulkanEngine::immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function)
@@ -295,8 +295,8 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 	VkViewport viewport = {};
 	viewport.x = 0;
 	viewport.y = 0;
-	viewport.width = _drawExtent.width;
-	viewport.height = _drawExtent.height;
+	viewport.width = (float)_drawExtent.width;
+	viewport.height = (float)_drawExtent.height;
 	viewport.minDepth = 0.f;
 	viewport.maxDepth = 1.f;
 

@@ -51,6 +51,8 @@ struct ComputeEffect
 	ComputePushConstants data;
 };
 
+
+
 constexpr unsigned int FRAME_OVERLAP = 2;
 
 class VulkanEngine {
@@ -100,6 +102,11 @@ public:
 	VkPipelineLayout _trianglePipelineLayout;
 	VkPipeline _trianglePipeline;
 
+	VkPipelineLayout _meshPipelineLayout;
+	VkPipeline _meshPipeline;
+
+	GPUMeshBuffers rectangle;
+	
 	//draw resources
 	AllocatedImage _drawImage;
 	VkExtent2D _drawExtent;
@@ -141,5 +148,10 @@ private:
 	void init_pipelines();
 	void init_background_pipelines();
 	void init_triangle_pipeline();
+	void init_mesh_pipeline();
 	void init_imgui();
+	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
+	void destroy_buffer(const AllocatedBuffer& buffer);
+	GPUMeshBuffers uploadMesh(std::span<uint32_t> indices, std::span<Vertex> vertices);
+	void init_default_data();
 };

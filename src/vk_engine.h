@@ -112,6 +112,8 @@ public:
 
 	//draw resources
 	AllocatedImage _drawImage;
+	AllocatedImage _depthImage;
+
 	VkExtent2D _drawExtent;
 
 	VkExtent2D _windowExtent{ 1700 , 900 };

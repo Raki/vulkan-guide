@@ -115,10 +115,12 @@ public:
 	AllocatedImage _depthImage;
 
 	VkExtent2D _drawExtent;
+	float renderScale = 1.f;
 
 	VkExtent2D _windowExtent{ 1700 , 900 };
 
 	bool stop_rendering{ false };
+	bool resize_requested{ false };
 	struct SDL_Window* _window{ nullptr };
 
 	//initializes everything in the engine
@@ -162,4 +164,5 @@ private:
 	AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 	void destroy_buffer(const AllocatedBuffer& buffer);
 	void init_default_data();
+	void resize_swapchain();
 };

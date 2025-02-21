@@ -205,9 +205,26 @@ void VulkanEngine::run()
 			{
 				bQuit = true;
 			}
-
+			else if (e.type == SDL_WINDOWEVENT)
+			{
+				if (e.window.event == SDL_WINDOWEVENT_MINIMIZED) 
+				{
+					stop_rendering = true;
+				}
+				if (e.window.event == SDL_WINDOWEVENT_RESTORED) 
+				{
+					stop_rendering = false;
+				}
+			}
 			//send SDL event to imgui for handling
 			ImGui_ImplSDL2_ProcessEvent(&e);
+		}
+
+		// do not draw if we are minimized
+		if (stop_rendering) {
+			// throttle the speed to avoid the endless spinning
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
 		}
 
 		// imgui new frame

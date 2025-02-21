@@ -118,6 +118,7 @@ public:
 
 	VkExtent2D _windowExtent{ 1700 , 900 };
 
+	bool stop_rendering{ false };
 	struct SDL_Window* _window{ nullptr };
 
 	//initializes everything in the engine

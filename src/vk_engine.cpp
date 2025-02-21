@@ -343,7 +343,7 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
 
 	vkCmdDrawIndexed(cmd, 6, 1, 0, 0, 0);
 
-	push_constants.worldMatrix = glm::mat4{ 1.f };
+	push_constants.worldMatrix = projection * view;
 	push_constants.vertexBuffer = testMeshes[2]->meshBuffers.vertexBufferAddress;
 
 	vkCmdPushConstants(cmd, _meshPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(GPUDrawPushConstants), &push_constants);

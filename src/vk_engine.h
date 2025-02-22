@@ -32,6 +32,17 @@ struct FrameData {
 	VkSemaphore _swapchainSemaphore, _renderSemaphore;
 	VkFence _renderFence;
 	DeletionQueue _deletionQueue;
+	DescriptorAllocatorGrowable _frameDescriptors;
+};
+
+struct GPUSceneData 
+{
+	glm::mat4 view;
+	glm::mat4 proj;
+	glm::mat4 viewproj;
+	glm::vec4 ambientColor;
+	glm::vec4 sunlightDirection; // w for sun power
+	glm::vec4 sunlightColor;
 };
 
 struct ComputePushConstants 
@@ -52,7 +63,38 @@ struct ComputeEffect
 	ComputePushConstants data;
 };
 
+struct GLTFMetallic_Roughness 
+{
+	MaterialPipeline opaquePipeline;
+	MaterialPipeline transparentPipeline;
 
+	VkDescriptorSetLayout materialLayout;
+
+	struct MaterialConstants 
+	{
+		glm::vec4 colorFactors;
+		glm::vec4 metal_rough_factors;
+		//padding, we need it anyway for uniform buffers
+		glm::vec4 extra[14];
+	};
+
+	struct MaterialResources 
+	{
+		AllocatedImage colorImage;
+		VkSampler colorSampler;
+		AllocatedImage metalRoughImage;
+		VkSampler metalRoughSampler;
+		VkBuffer dataBuffer;
+		uint32_t dataBufferOffset;
+	};
+
+	DescriptorWriter writer;
+
+	void build_pipelines(VulkanEngine* engine);
+	void clear_resources(VkDevice device);
+
+	MaterialInstance write_material(VkDevice device, MaterialPass pass, const MaterialResources& resources, DescriptorAllocatorGrowable& descriptorAllocator);
+};
 
 constexpr unsigned int FRAME_OVERLAP = 2;
 
@@ -88,6 +130,7 @@ public:
 
 	VkDescriptorSet _drawImageDescriptors;
 	VkDescriptorSetLayout _drawImageDescriptorLayout;
+	VkDescriptorSetLayout _singleImageDescriptorLayout;
 
 	VkPipeline _gradientPipeline;
 	VkPipelineLayout _gradientPipelineLayout;
@@ -114,8 +157,20 @@ public:
 	AllocatedImage _drawImage;
 	AllocatedImage _depthImage;
 
+	GPUSceneData sceneData;
+
+	VkDescriptorSetLayout _gpuSceneDataDescriptorLayout;
+
 	VkExtent2D _drawExtent;
 	float renderScale = 1.f;
+
+	AllocatedImage _whiteImage;
+	AllocatedImage _blackImage;
+	AllocatedImage _greyImage;
+	AllocatedImage _errorCheckerboardImage;
+
+	VkSampler _defaultSamplerLinear;
+	VkSampler _defaultSamplerNearest;
 
 	VkExtent2D _windowExtent{ 1700 , 900 };
 
@@ -165,4 +220,7 @@ private:
 	void destroy_buffer(const AllocatedBuffer& buffer);
 	void init_default_data();
 	void resize_swapchain();
+	AllocatedImage create_image(VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
+	AllocatedImage create_image(void* data, VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
+	void destroy_image(const AllocatedImage& img);
 };

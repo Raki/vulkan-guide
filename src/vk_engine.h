@@ -96,6 +96,31 @@ struct GLTFMetallic_Roughness
 	MaterialInstance write_material(VkDevice device, MaterialPass pass, const MaterialResources& resources, DescriptorAllocatorGrowable& descriptorAllocator);
 };
 
+struct RenderObject 
+{
+	uint32_t indexCount;
+	uint32_t firstIndex;
+	VkBuffer indexBuffer;
+
+	MaterialInstance* material;
+
+	glm::mat4 transform;
+	VkDeviceAddress vertexBufferAddress;
+};
+
+struct DrawContext
+{
+	std::vector<RenderObject> OpaqueSurfaces;
+};
+
+struct MeshNode : public Node
+{
+
+	std::shared_ptr<MeshAsset> mesh;
+
+	virtual void Draw(const glm::mat4& topMatrix, DrawContext& ctx) override;
+};
+
 constexpr unsigned int FRAME_OVERLAP = 2;
 
 class VulkanEngine {
@@ -126,7 +151,7 @@ public:
 
 	VmaAllocator _allocator;
 
-	DescriptorAllocator globalDescriptorAllocator;
+	DescriptorAllocatorGrowable globalDescriptorAllocator;
 
 	VkDescriptorSet _drawImageDescriptors;
 	VkDescriptorSetLayout _drawImageDescriptorLayout;
@@ -171,6 +196,9 @@ public:
 
 	VkSampler _defaultSamplerLinear;
 	VkSampler _defaultSamplerNearest;
+
+	MaterialInstance defaultData;
+	GLTFMetallic_Roughness metalRoughMaterial;
 
 	VkExtent2D _windowExtent{ 1700 , 900 };
 
